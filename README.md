@@ -7,3 +7,10 @@ requisiti funzionali,
 requisiti non funzionalie,
 front-end,
 back-end.
+
+COMPLETATI:
+- ✅ obiettivi
+- ❌ requisiti funzionali
+- ❌ requisiti non funzionali
+- ❌ front-end
+- ❌ back-end
