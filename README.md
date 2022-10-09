@@ -12,5 +12,5 @@ COMPLETATI:
 - ✅ obiettivi
 - ✅ requisiti funzionali
 - ✅ requisiti non funzionali
-- ✍️ front-end
-- ✍️ back-end
+- ✅ front-end
+- ✅ back-end
