@@ -1,13 +1,13 @@
 context Gestione Registrazione::signUp(potenzialeUtente: Utente)
 pre: verificaEmail(potenzialeUtente.email) = true
 
-context Gestione Registrazione::salvaUtente(utente: Utente)
+context Utente::salvaUtente(utente: Utente)
 pre: esitoRegistrazione = true
 
 context Gestione Auth0::modificaPassword(username, oldpass, newpass)
 pre: verificaPassword(username, oldpass) = true
 
-context Gestione Login:signIn(username: string, password: string)
+context Utente:signIn(username: string, password: string)
 pre: Utente.username = username AND Utente.bloccato = false
 
 context ScritturaDB::salvaUtente(datiUtente: Utente)
@@ -73,7 +73,7 @@ pre: idUtenteAutenticato != NULL
 context Gestione Home::pubblicaAnnuncio(idUtenteAutenticato: string)
 pre: idUtenteAutenticato != NULL
 
-context Mappa inv: raggioDiRicerca > 0
+context Mappa inv: raggioDiRicerca > 0 AND raggioDIRicerca < 40000
 
 context SchedaProdotto::aggiungiWishList(idAnnuncio: string, idUtenteAutenticato: string)
 pre: idUtenteAutenticato != NULL
@@ -90,6 +90,6 @@ context Data inv: mese >= 1 AND mese <= 12
 context Data inv: giorno >= 1 AND giorno <= 31
 
 context Timestamp inv: ora >= 1 AND ora <= 24
-context Timestamp inv: minuti >= 1 AND minuti <= 24
+context Timestamp inv: minuti >= 1 AND minuti <= 60
 
 context LogUtente inv: segnalazioniIrrisolte->forAll(Segnalazione.risolta = false)
