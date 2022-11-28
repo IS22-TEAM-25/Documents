@@ -1,0 +1,95 @@
+context Gestione Registrazione::signUp(potenzialeUtente: Utente)
+pre: verificaEmail(potenzialeUtente.email) = true
+
+context Gestione Registrazione::salvaUtente(utente: Utente)
+pre: esitoRegistrazione = true
+
+context Gestione Auth0::modificaPassword(username, oldpass, newpass)
+pre: verificaPassword(username, oldpass) = true
+
+context Gestione Login:signIn(username: string, password: string)
+pre: Utente.username = username AND Utente.bloccato = false
+
+context ScritturaDB::salvaUtente(datiUtente: Utente)
+pre: LetturaDB.visualizzaUtente(datiUtente.username) = NULL
+
+context ScritturaDB::modificaDatiUtente(datiUtente: string)
+pre: LetturaDB.visualizzaUtente(datiUtente.username) != NULL
+
+context ScritturaDB::rimuoviUtente(username: string)
+pre: LetturaDB.visualizzaUtente(username) != NULL
+
+context ScritturaDB::salvaAnnuncio(annuncio: Annuncio)
+pre: LetturaDB.visualizzaAnnuncio(annuncio.idAnnuncio) = NULL
+
+context ScritturaDB::modificaAnnuncio(annuncio: Annuncio)
+pre: LetturaDB.visualizzaAnnuncio(annuncio.idAnnuncio) != NULL
+
+context ScritturaDB::rimuoviAnnuncio(idAnnuncio: string)
+pre: LetturaDB.visualizzaAnnuncio(annuncio.idAnnuncio) != NULL
+
+context ScritturaDB::modificaInfoProfilo(username: string)
+pre: LetturaDB.visualizzaUtente(username) != NULL
+
+context Pubblicazione Annuncio::salvaAnnuncio(annuncio: Annuncio)
+post: annuncio.visibile = true
+
+context Profilo::modificaAnnuncio(annuncio: Annuncio)
+pre: annuncio.usernameInserzionista = Utente.username
+
+context Statistiche::calcolaRicavato(transazioni: Transazione[*], periodo: Periodo)
+pre: transazioni->isEmpty() = false
+
+context Amministratore::bloccaProfilo(idUtente: string)
+post: Utente.bloccato = true
+
+context Utente::inviaSegnalazione(segnalazione: Segnalazione)
+post: LogUtente.segnalazioniIrrisolte->append(segnalazione)
+
+context Transazione::salvaNelloStorico(idAcquirente: string)
+pre: pagamentoEffettuato = true
+
+context Interfaccia Sistema Pagamento::rimuoviAnnuncio(idAnnuncio: string)
+pre: transazione.pagamentoEffettuato = true
+post: if Annuncio.affitto = true then Annuncio.visibile = false else ScritturaDB.rimuoviAnnuncio(idAnnuncio)
+
+context InterfacciaGmail inv: validitaIndirizzo = true
+
+context Recensione inv: stelle >= 0 AND stelle <=5
+context Recensione inv: descrizione->size() <= 200
+
+context Annuncio inv: descrizione->size() <= 350
+context Annuncio inv: foto->size() <= 10
+context Annuncio inv: Categorie.categorie->includes(categoria) = true
+context Annuncio inv: if pagamentoOnline != false then contoPayPal != NULL
+
+context Filtro inv: raggioDiRicerca > 0
+
+context Periodo inv: dataFinale > dataIniziale
+
+context Gestione Home::vaiAlProfilo(idUtenteAutenticato: string)
+pre: idUtenteAutenticato != NULL
+
+context Gestione Home::pubblicaAnnuncio(idUtenteAutenticato: string)
+pre: idUtenteAutenticato != NULL
+
+context Mappa inv: raggioDiRicerca > 0
+
+context SchedaProdotto::aggiungiWishList(idAnnuncio: string, idUtenteAutenticato: string)
+pre: idUtenteAutenticato != NULL
+post: Utente.Profilo.wishList->append(Annuncio)
+
+context SchedaProdotto::eseguiPagamento(idAnnuncio: string, idUtenteAutenticato: string)
+pre: idUtenteAutenticato != NULL AND Annuncio.pagamentoOnline = true
+
+context SchedaProdotto::iniziaChat(idInserzionista: string, idUtenteAutenticato: string)
+pre: idUtenteAutenticato != NULL
+
+context Data inv: anno >= 1900 AND anno <= 2300
+context Data inv: mese >= 1 AND mese <= 12
+context Data inv: giorno >= 1 AND giorno <= 31
+
+context Timestamp inv: ora >= 1 AND ora <= 24
+context Timestamp inv: minuti >= 1 AND minuti <= 24
+
+context LogUtente inv: segnalazioniIrrisolte->forAll(Segnalazione.risolta = false)
